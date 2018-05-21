@@ -67,10 +67,10 @@ class MainWidget(QWidget):
 		btn = QMessageBox.warning(self,"Game Over","Resart??",QMessageBox.Yes|QMessageBox.No)
 		if btn == QMessageBox.Yes:
 			self.gameWidget.restart()
-if __name__=="__main__":
-	import sys
-	app = QApplication(sys.argv)
-	gw = MainWidget()
-	gw.show()
-	# btn.show()
-	sys.exit(app.exec_())
+# if __name__=="__main__":
+# 	import sys
+# 	app = QApplication(sys.argv)
+# 	gw = MainWidget()
+# 	gw.show()
+# 	# btn.show()
+# 	sys.exit(app.exec_())
