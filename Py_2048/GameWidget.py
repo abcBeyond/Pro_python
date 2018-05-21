@@ -5,8 +5,10 @@ from PyQt4.QtGui import *
 from PyQt4.QtOpenGL import QGLWidget
 import random
 import math
+from PyQt4 import QtCore
 
 class GameWidget(QGLWidget):
+	signalGameOver=QtCore.pyqtSignal()
 	value=[]
 	colors=[QColor.fromRgb(0xFF, 0xFF, 0xCC), QColor.fromRgb(0xFF, 0xFF, 0x99),
     QColor.fromRgb(0xFF, 0xCC, 0xCC), QColor.fromRgb(0xFF, 0xCC, 0x99),
@@ -18,11 +20,6 @@ class GameWidget(QGLWidget):
 		super(GameWidget,self).__init__(parent)
 		tempValue=[]
 		self.num=num
-		# for i in xrange(num):
-		# 	for j in xrange(num):
-		# 		tempValue.append(0)
-		# 	self.value.append(tempValue)
-		# 	tempValue=[]
 		self.start()	
 		self.resize(400,400)
 		print self.value
@@ -50,7 +47,7 @@ class GameWidget(QGLWidget):
 		painter.setBrush(brush)
 		painter.setPen(Qt.NoPen)
 		# painter.drawRect(0,0,100,100)
-		painter.drawRoundedRect(QRect(0,0,self.width(),self.height()),10,10)
+		painter.drawRoundedRect(QRect(0,0,self.width(),self.height()),30,30)
 		font = QFont()
 		font.setFamily("Consolas")
 		font.setBold(True)
@@ -70,6 +67,7 @@ class GameWidget(QGLWidget):
 				painter.drawRoundRect(QRect(i*(self.width()/self.num),j*(self.height()/self.num),self.width()/self.num,self.height()/self.num),30,30)
 				painter.setFont(font)
 				painter.setPen(QColor(0,0,0))
+				# painter.setPen(Qt.NoPen)
 				if self.value[j][i] != 0:
 					painter.drawText(QRectF(i*(self.width()/self.num),j*(self.height()/self.num),self.width()/self.num,self.height()/self.num),Qt.AlignCenter,QString("%1").arg(self.value[j][i]))
 	def mousePressEvent(self,e):
@@ -142,6 +140,7 @@ class GameWidget(QGLWidget):
 		if flag == 0:
 			if self.checkGameOver():
 				print "Game Over"
+				self.signalGameOver.emit()
 			else:
 				print "Go on"
 		else:
