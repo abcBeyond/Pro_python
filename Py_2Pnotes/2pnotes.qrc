@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/pic/icon">
+        <file alias="delRecord">icons/private/delRecord.png</file>
+        <file alias="Record1">icons/private/delRecord1.png</file>
+        <file alias="key">icons/private/key.png</file>
+        <file alias="key1">icons/private/key1.png</file>
+        <file alias="margin">icons/private/margin.png</file>
+        <file alias="margin-quer">icons/private/margin-quer.png</file>
+        <file alias="myLabel">icons/private/myLabel.png</file>
+        <file alias="newRecord">icons/private/newRecord.png</file>
+        <file alias="newRecord1">icons/private/newRecord1.png</file>
+        <file alias="copy">icons/qt/copy.png</file>
+        <file alias="copyright">icons/qt/copyright</file>
+        <file alias="cut">icons/qt/cut.png</file>
+        <file alias="exit">icons/qt/exit.png</file>
+        <file alias="fileclose">icons/qt/fileclose.png</file>
+        <file alias="find_normal">icons/qt/find_normal.png</file>
+        <file alias="new">icons/qt/new.png</file>
+        <file alias="open">icons/qt/open.png</file>
+        <file alias="paste">icons/qt/paste.png</file>
+        <file alias="print">icons/qt/print.png</file>
+        <file alias="print-record">icons/qt/print-record.png</file>
+        <file alias="qt-logo">icons/qt/qt-logo.png</file>
+        <file alias="redo">icons/qt/redo.png</file>
+        <file alias="save">icons/qt/save.png</file>
+        <file alias="undo">icons/qt/undo.png</file>
+    </qresource>
+</RCC>
