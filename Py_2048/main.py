@@ -1,4 +1,5 @@
-#! coding:utf-8-*-
+#!/usr/bin/python2
+#! -*- coding:utf-8 -*-
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -8,4 +9,4 @@ if __name__=="__main__":
 	app = QApplication(sys.argv)
 	mw = MainWidget()
 	mw.show()
-	sys.exit(app.exec_())	
+	sys.exit(app.exec_())
