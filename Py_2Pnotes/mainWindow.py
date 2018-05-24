@@ -130,6 +130,8 @@ class MyMainWindow(QMainWindow):
 	def aboutThisApp(self):
 		btn = QMessageBox.information(self,self.tr("About"),"Just Know that")
 
+        def closeEvent(self,e):
+           print "close" 
 # import sys	
 # app = QApplication(sys.argv)
 # myWin=MyMainWindow()
