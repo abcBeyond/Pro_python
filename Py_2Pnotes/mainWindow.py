@@ -13,7 +13,7 @@ class MyMainWindow(QMainWindow):
 		self.mb = self.menuBar()
 		font =QFont()
 		font.setPixelSize(15)
-		self.mb.setFont(font)	
+		self.mb.setFont(font)
 		#Menu File
 		self.menuFile = self.mb.addMenu(self.tr("&File"))
 		# self.menuFile.setFont(font)
@@ -26,6 +26,9 @@ class MyMainWindow(QMainWindow):
 		self.actionPrint = QAction(QIcon(":/pic/icon/print"),self.tr("Print"),self)
 		self.actionClose = QAction(QIcon(":/pic/icon/fileclose"),self.tr("Close"),self)
 		self.actionExit = QAction(QIcon(":/pic/icon/exit"),self.tr("Exit"),self)
+
+                self.actionNew.setToolTip(self.tr("new file")) #鼠标在action上显示提示,toolbar
+
 		self.menuFile.addAction(self.actionNew)
 		self.menuFile.addAction(self.actionOpen)
 		self.menuFile.addAction(self.actionSave)
@@ -41,20 +44,20 @@ class MyMainWindow(QMainWindow):
 
 		#Menu Edit
 		self.menuEdit =self.mb.addMenu(self.tr("&Edit"))
-		self.actionNewEntry = QAction(QIcon(":/pic/icon/newRecord"),self.tr("New Entry"),self) 
-		self.actionDelEntry = QAction(QIcon(":/pic/icon/delRecord"),self.tr("Delete Entry"),self) 
-		self.actionCut = QAction(QIcon(":/pic/icon/cut"),self.tr("Cut"),self) 
-		self.actionCopy = QAction(QIcon(":/pic/icon/copy"),self.tr("Copy"),self) 
-		self.actionPaste = QAction(QIcon(":/pic/icon/paste"),self.tr("Paste"),self) 
+		self.actionNewEntry = QAction(QIcon(":/pic/icon/newRecord"),self.tr("New Entry"),self)
+		self.actionDelEntry = QAction(QIcon(":/pic/icon/delRecord"),self.tr("Delete Entry"),self)
+		self.actionCut = QAction(QIcon(":/pic/icon/cut"),self.tr("Cut"),self)
+		self.actionCopy = QAction(QIcon(":/pic/icon/copy"),self.tr("Copy"),self)
+		self.actionPaste = QAction(QIcon(":/pic/icon/paste"),self.tr("Paste"),self)
 		self.actionChgKey = QAction(QIcon(":/pic/icon/key1"),self.tr("Change Key..."),self)
 
 		self.menuEdit.addAction(self.actionNewEntry)
 		self.menuEdit.addAction(self.actionDelEntry)
-		self.menuEdit.addSeparator()	
+		self.menuEdit.addSeparator()
 		self.menuEdit.addAction(self.actionCut)
 		self.menuEdit.addAction(self.actionCopy)
 		self.menuEdit.addAction(self.actionPaste)
-		self.menuEdit.addSeparator()	
+		self.menuEdit.addSeparator()
 		self.menuEdit.addAction(self.actionChgKey)
 
 
@@ -64,9 +67,9 @@ class MyMainWindow(QMainWindow):
 		self.actionEnableToolTips = QAction(self.tr("Enable ToolTips"),self)
 		self.actionEnableToolTips.setCheckable(True)
 
-		
+
 		self.extraMenu.addAction(self.actionFont)
-		self.extraMenu.addSeparator()	
+		self.extraMenu.addSeparator()
 		self.extraMenu.addAction(self.actionEnableToolTips)
 
 		self.aboutMenu = self.mb.addMenu(self.tr("&About"))
@@ -92,10 +95,34 @@ class MyMainWindow(QMainWindow):
 		self.tbar.addAction(self.actionNewEntry)
 		self.tbar.addAction(self.actionDelEntry)
 		self.tbar.addSeparator()
-		self.tbar.addAction(self.actionExit)
+                self.tbar.addAction(self.actionExit)
 
+                self.center = QWidget()
+                self.labelBookMark =QLabel(self.tr("BookMark"))
+                self.labelPasswd =QLabel(self.tr("Passwd"))
+                self.editLineBookMark =QLineEdit()
+                self.editLinePasswd =QLineEdit()
+                self.textEdit = QTextEdit()
+                self.labelAnnotations = QLabel(self.tr("Annotations"))
+                self.textEdit2 = QTextEdit()
+                layout = QGridLayout()
+                layout.addWidget(self.labelBookMark,0,0)
+                layout.addWidget(self.labelPasswd,0,1)
+                layout.addWidget(self.editLineBookMark,1,0)
+                layout.addWidget(self.editLinePasswd,1,1)
+                layout.addWidget(self.textEdit,2,0)
+                #layout.addWidget(self.labelAnnotations,2,1,1,1)
+                vboxLayout = QVBoxLayout()
+                vboxLayout.addWidget(self.labelAnnotations)
+                vboxLayout.addWidget(self.textEdit2)
+              #  vboxLayout.setStretch(0,1)
+              #  vboxLayout.setStretch(1,)
+                layout.addLayout(vboxLayout,2,1) 
+                #layout.addWidget(self.textEdit2,3,1,1,4)
 
-		self.resize(800,400)	
+                self.center.setLayout(layout)
+                self.setCentralWidget(self.center)
+                self.resize(800,400)
 	def quitApp(self):
 		qApp.exit()
 	def myaboutQT(self):
