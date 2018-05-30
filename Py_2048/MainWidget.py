@@ -32,7 +32,8 @@ class UiButton(QPushButton):
 class MainWidget(QWidget):
 	def __init__(self,parent=None):
 		super(MainWidget,self).__init__(parent)
-		self.resize(408,606)
+		# self.resize(408,606)
+		self.setFixedSize(408,606)
 		self.buildUI()
 		self.connect(self.button,SIGNAL("clicked()"),self.gameWidget.restart)
 	def buildUI(self):
