@@ -1,10 +1,12 @@
 # ！ -*- coding:utf-8 -*-
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtOpenGL import QGLWidget
 import random
-from PyQt4 import QtCore
+
+from PyQt5 import QtCore
+from PyQt5.QtCore import QParallelAnimationGroup, QPoint, QRect, QRectF
+from PyQt5.QtGui import QColor, QPainter, QBrush, QPen, QFont
+from PyQt5.QtOpenGL import QGLWidget
+from PyQt5.QtCore import Qt
 
 
 class GameWidget(QGLWidget):
@@ -30,8 +32,8 @@ class GameWidget(QGLWidget):
 
     def start(self):
         tempValue = []
-        for i in xrange(self.num):
-            for j in xrange(self.num):
+        for i in range(self.num):
+            for j in range(self.num):
                 tempValue.append(0)
             self.value.append(tempValue)
             tempValue = []
@@ -81,7 +83,7 @@ class GameWidget(QGLWidget):
                     painter.drawText(
                         QRectF(0 + rect_e_space + (rect_e_space + rect_len) * x,
                                0 + rect_e_space + (rect_e_space + rect_len) * y, rect_len, rect_len), Qt.AlignCenter,
-                        QString("%1").arg(self.value[y][x]))
+                        str(self.value[y][x]))
 
         painter.restore()
 
@@ -108,15 +110,15 @@ class GameWidget(QGLWidget):
     def reBuildArray(self, direct):
         temp = []
         if direct == 1 or direct == 2:
-            for i in xrange(self.num):
+            for i in range(self.num):
                 self.value[i] = self.reBuildOneLine(self.value[i], direct)
         elif direct == 3 or direct == 4:
-            for j in xrange(self.num):
+            for j in range(self.num):
                 tempRow = []
-                for m in xrange(self.num):
+                for m in range(self.num):
                     tempRow.append(self.value[m][j])
                 tempRowReult = self.reBuildOneLine(tempRow, direct)
-                for n in xrange(self.num):
+                for n in range(self.num):
                     self.value[n][j] = tempRowReult[n]
         self.addNewPoint()
         self.update()
@@ -136,7 +138,7 @@ class GameWidget(QGLWidget):
                 temp[startPos] = data
                 startPos = startPos + 1
 
-        for i in xrange(len(temp) - 1):
+        for i in range(len(temp) - 1):
             if temp[i] == 0 and temp[i + 1] != 0:
                 temp[i] = temp[i + 1]
                 temp[i + 1] = 0
@@ -155,16 +157,18 @@ class GameWidget(QGLWidget):
 
     def addNewPoint(self):
         flag = 0
-        for i in xrange(self.num):
-            for j in xrange(self.num):
+        for i in range(self.num):
+            for j in range(self.num):
                 if self.value[i][j] == 0:
                     flag = 1
         if flag == 0:
             if self.checkGameOver():
-                print "Game Over"
+                print
+                "Game Over"
                 self.signalGameOver.emit()
             else:
-                print "Go on"
+                print
+                "Go on"
         else:
             self.newPoint()
 
@@ -186,8 +190,8 @@ class GameWidget(QGLWidget):
 
     def checkGameOver(self):
         bret = False
-        for i in xrange(self.num):
-            for j in xrange(self.num):
+        for i in range(self.num):
+            for j in range(self.num):
                 if self.checkPointHasSome(i, j):
                     return bret
         return True

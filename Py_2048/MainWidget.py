@@ -1,8 +1,9 @@
 #! -*- coding:utf-8 -*-
 
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
-from GameWidget import GameWidget
+from PyQt5.QtCore import QRect, Qt
+from PyQt5.QtGui import QPainter, QPen, QBrush, QColor, QFont, QPalette
+from PyQt5.QtWidgets import QPushButton, QWidget, QMessageBox, QHBoxLayout, QVBoxLayout
+from . import GameWidget
 
 
 class UiButton(QPushButton):
@@ -16,7 +17,7 @@ class UiButton(QPushButton):
     def paintEvent(self, e):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
-        painter.setPen(QPen(Qt.NoPen))
+        # painter.setPen(QPen())
         brush = QBrush(QColor.fromRgb(0xFF, 0xFF, 0xCC))
         painter.setBrush(brush)
         painter.drawEllipse(QRect(0, 0, e.rect().width(), e.rect().height()))
@@ -34,10 +35,10 @@ class MainWidget(QWidget):
         super(MainWidget, self).__init__(parent)
         self.setFixedSize(480, 640)
         self.buildUI()
-        self.connect(self.button, SIGNAL("clicked()"), self.gameWidget.restart)
+        # self.connect(self.button, SIGNAL("clicked()"), self.gameWidget.restart)
+        self.button.clicked.connect(self.gameWidget.restart)
 
     def buildUI(self):
-
         _palette = self.palette()
         _palette.setBrush(QPalette.Background, Qt.black)
         self.setPalette(_palette)
@@ -66,13 +67,13 @@ class MainWidget(QWidget):
         vboxLayout.setStretch(1, 1)
         vboxLayout.setStretch(2, 0.5)
 
-        self.gameWidget = GameWidget(4, self)
+        self.gameWidget = GameWidget.GameWidget(4, self)
         self.gameWidget.setGeometry(2, 150, self.width(), self.height() - 100 - 20)
         self.setLayout(vboxLayout)
-        self.connect(self.gameWidget, SIGNAL("signalGameOver()"), self.slotGameOver)
+        # self.connect(self.gameWidget, SIGNAL("signalGameOver()"), self.slotGameOver)
+        self.gameWidget.signalGameOver.connect(self.slotGameOver)
 
     def slotGameOver(self):
-        print "slot game over"
         btn = QMessageBox.warning(self, "Game Over", "Resart??", QMessageBox.Yes | QMessageBox.No)
         if btn == QMessageBox.Yes:
             self.gameWidget.restart()
