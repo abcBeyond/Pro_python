@@ -2,14 +2,28 @@
 
 import random
 
-from PyQt5 import QtCore
-from PyQt5.QtCore import QParallelAnimationGroup, QPoint, QRect, QRectF
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtCore import QParallelAnimationGroup, QPoint, QRect, QRectF, QPropertyAnimation, QEasingCurve
 from PyQt5.QtGui import QColor, QPainter, QBrush, QPen, QFont
-from PyQt5.QtOpenGL import QGLWidget
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget
 
 
-class GameWidget(QGLWidget):
+class CPara:
+    #
+    space = 5
+
+    #
+    inter = 5
+
+    #
+    dir_up = 4
+    dir_down = 3
+    dir_left = 2
+    dir_right = 1
+
+
+class GameWidget(QWidget):
     """游戏元素"""
     signalGameOver = QtCore.pyqtSignal()
     value = []
@@ -19,24 +33,25 @@ class GameWidget(QGLWidget):
               QColor.fromRgb(0xFF, 0x66, 0x66), QColor.fromRgb(0xCC, 0x99, 0x66),
               QColor.fromRgb(0xCC, 0x33, 0x33), QColor.fromRgb(0xCC, 0x00, 0x33),
               QColor.fromRgb(0xFF, 0x00, 0x00)]
-    para_animation = QParallelAnimationGroup()
 
-    def __init__(self, num=5, parent=None):
+    def __init__(self, width, num=5, parent=None):
         super(GameWidget, self).__init__(parent)
-        self.rect_size = 480
+        self.rect_size = width
         self.space_size = 30
-        self.rect_radius = 20
+        self.rect_radius = 10
         self.num = num
-        self.start()
+        self.press_pos = None
+        self.release_pos = None
         self.resize(self.rect_size, self.rect_size)
+        self.start()
 
     def start(self):
-        tempValue = []
+        temp_value = []
         for i in range(self.num):
             for j in range(self.num):
-                tempValue.append(0)
-            self.value.append(tempValue)
-            tempValue = []
+                temp_value.append(0)
+            self.value.append(temp_value)
+            temp_value = []
         pos00 = random.randint(0, self.num - 1)
         pos01 = random.randint(0, self.num - 1)
         pos10 = random.randint(0, self.num - 1)
@@ -54,8 +69,8 @@ class GameWidget(QGLWidget):
         painter.setBrush(brush)
         painter.drawRoundedRect(QRect(0, 0, self.rect_size, self.rect_size), self.rect_radius, self.rect_radius)
 
-        rect_len = (self.rect_size - self.space_size) / self.num
-        rect_e_space = (self.space_size) / self.num
+        rect_len = (self.rect_size - CPara.inter * (self.num + 1)) / self.num
+        rect_e_space = CPara.inter
         painter.save()
         pen_ = QPen(Qt.white)
         pen_.setWidth(2)
@@ -72,7 +87,7 @@ class GameWidget(QGLWidget):
                 _pen.setBrush(Qt.white)
                 _pen.setWidth(3)
                 painter.setPen(Qt.NoPen)
-                painter.setBrush(self.getColor(self.value[y][x]))
+                painter.setBrush(self.get_color(self.value[y][x]))
                 painter.drawRoundedRect(QRectF(0 + rect_e_space + (rect_e_space + rect_len) * x,
                                                0 + rect_e_space + (rect_e_space + rect_len) * y, rect_len, rect_len),
                                         self.rect_radius,
@@ -84,59 +99,55 @@ class GameWidget(QGLWidget):
                         QRectF(0 + rect_e_space + (rect_e_space + rect_len) * x,
                                0 + rect_e_space + (rect_e_space + rect_len) * y, rect_len, rect_len), Qt.AlignCenter,
                         str(self.value[y][x]))
-
         painter.restore()
 
     def mousePressEvent(self, e):
-        self.pressPos = e.pos()
+        self.press_pos = e.pos()
 
     def mouseReleaseEvent(self, e):
-        self.releasePos = e.pos()
-        x = abs(self.releasePos.x() - self.pressPos.x())
-        y = abs(self.releasePos.y() - self.pressPos.y())
+        self.release_pos = e.pos()
+        x = abs(self.release_pos.x() - self.press_pos.x())
+        y = abs(self.release_pos.y() - self.press_pos.y())
         direct = 0
         if x > y:
-            if self.releasePos.x() > self.pressPos.x():
-                direct = 1  # right
+            if self.release_pos.x() > self.press_pos.x():
+                direct = CPara.dir_right  # right
             else:
-                direct = 2  # left
+                direct = CPara.dir_left  # left
         else:
-            if self.releasePos.y() > self.pressPos.y():
-                direct = 3  # down
+            if self.release_pos.y() > self.press_pos.y():
+                direct = CPara.dir_down  # down
             else:
-                direct = 4  # up
-        self.reBuildArray(direct)
+                direct = CPara.dir_up  # up
+        self.re_build_array(direct)
 
-    def reBuildArray(self, direct):
-        temp = []
-        if direct == 1 or direct == 2:
+    def re_build_array(self, direct):
+        if direct == CPara.dir_right or direct == CPara.dir_left:
             for i in range(self.num):
-                self.value[i] = self.reBuildOneLine(self.value[i], direct)
-        elif direct == 3 or direct == 4:
+                self.value[i] = self.re_build_one_line(self.value[i], direct)
+        elif direct == CPara.dir_down or direct == CPara.dir_up:
             for j in range(self.num):
-                tempRow = []
+                temp_row = []
                 for m in range(self.num):
-                    tempRow.append(self.value[m][j])
-                tempRowReult = self.reBuildOneLine(tempRow, direct)
+                    temp_row.append(self.value[m][j])
+                temp_row_result = self.re_build_one_line(temp_row, direct)
                 for n in range(self.num):
-                    self.value[n][j] = tempRowReult[n]
+                    self.value[n][j] = temp_row_result[n]
         self.addNewPoint()
         self.update()
 
-    def reBuildOneLine(self, lineData, direct):
-        temp = [0] * len(lineData)
-        endPos = len(lineData) - 1
-        startPos = 0
-        front = 0
-        if direct == 1 or direct == 3:
-            lineData = reversed(lineData)
+    def re_build_one_line(self, line_data, direct):
+        temp = [0] * len(line_data)
+        start_pos = 0
+        if direct == CPara.dir_right or direct == CPara.dir_down:
+            line_data = reversed(line_data)
 
-        for data in lineData:
+        for data in line_data:
             if data == 0:
                 continue
             else:
-                temp[startPos] = data
-                startPos = startPos + 1
+                temp[start_pos] = data
+                start_pos = start_pos + 1
 
         for i in range(len(temp) - 1):
             if temp[i] == 0 and temp[i + 1] != 0:
@@ -145,11 +156,11 @@ class GameWidget(QGLWidget):
             if temp[i] == temp[i + 1]:
                 temp[i] = temp[i] + temp[i]
                 temp[i + 1] = 0
-        if direct == 1 or direct == 3:
-            temp = self.reverList(temp)
+        if direct == CPara.dir_right or direct == CPara.dir_down:
+            temp = self.rever_list(temp)
         return temp
 
-    def reverList(self, ll):
+    def rever_list(self, ll):
         temp = []
         for data in reversed(ll):
             temp.append(data)
@@ -162,25 +173,23 @@ class GameWidget(QGLWidget):
                 if self.value[i][j] == 0:
                     flag = 1
         if flag == 0:
-            if self.checkGameOver():
-                print
-                "Game Over"
+            if self.check_game_over():
+                print(self.tr("Game Over"))
                 self.signalGameOver.emit()
             else:
-                print
-                "Go on"
+                print(self.tr("Game on"))
         else:
-            self.newPoint()
+            self.new_point()
 
-    def newPoint(self):
+    def new_point(self):
         pos00 = random.randint(0, self.num - 1)
         pos01 = random.randint(0, self.num - 1)
         if self.value[pos00][pos01] == 0:
             self.value[pos00][pos01] = 2
         else:
-            self.newPoint()
+            self.new_point()
 
-    def getColor(self, number):
+    def get_color(self, number):
         if number == 0:
             return self.colors[0]
         for i in range(100):
@@ -188,32 +197,32 @@ class GameWidget(QGLWidget):
                 return self.colors[i]
         return None
 
-    def checkGameOver(self):
+    def check_game_over(self):
         bret = False
         for i in range(self.num):
             for j in range(self.num):
-                if self.checkPointHasSome(i, j):
+                if self.check_point_has_some(i, j):
                     return bret
         return True
 
-    def checkPointHasSome(self, i, j):
-        valuet = self.value[i][j]
+    def check_point_has_some(self, i, j):
+        valet = self.value[i][j]
         iret = 1
         if j - 1 >= 0:
             up = self.value[i][j - 1]
-            if up == valuet:
+            if up == valet:
                 return iret
         if j + 1 < self.num:
             down = self.value[i][j + 1]
-            if down == valuet:
+            if down == valet:
                 return iret
         if i + 1 < self.num:
             right = self.value[i + 1][j]
-            if right == valuet:
+            if right == valet:
                 return iret
         if i - 1 >= 0:
             left = self.value[i - 1][j]
-            if left == valuet:
+            if left == valet:
                 return iret
         return 0
 
@@ -221,3 +230,18 @@ class GameWidget(QGLWidget):
         self.value = []
         self.start()
         self.update()
+
+    def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
+        key_e = a0.key()
+        _dir = None
+        if key_e == Qt.Key_Up or key_e == Qt.Key_W:
+            _dir = CPara.dir_up
+        elif key_e == Qt.Key_Down or key_e == Qt.Key_S:
+            _dir = CPara.dir_down
+        elif key_e == Qt.Key_Left or key_e == Qt.Key_A:
+            _dir = CPara.dir_left
+        elif key_e == Qt.Key_Right or key_e == Qt.Key_D:
+            _dir = CPara.dir_right
+        else:
+            return
+        self.re_build_array(_dir)
